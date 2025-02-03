@@ -1,0 +1,15 @@
+﻿version: '3.8'
+
+services:
+  mc2-crudtest-presentation-server:
+    build:
+      context: ../../
+      dockerfile: Mc2.CrudTest.Presentation/Server/Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
