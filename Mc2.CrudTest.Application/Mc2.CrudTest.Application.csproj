@@ -1,18 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+	<ItemGroup>
+		<Folder Include="Customer\Query\" />
+	</ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Customer\Query\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Mc2.CrudTest.Domain\Mc2.CrudTest.Domain.csproj" />
-      <ProjectReference Include="..\Mc2.CrudTest.Infrastructure\Mc2.CrudTest.Infrastructure.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Mc2.CrudTest.Domain\Mc2.CrudTest.Domain.csproj" />
+		<ProjectReference Include="..\Mc2.CrudTest.Infrastructure\Mc2.CrudTest.Infrastructure.csproj" />
+	</ItemGroup>
 
 </Project>
