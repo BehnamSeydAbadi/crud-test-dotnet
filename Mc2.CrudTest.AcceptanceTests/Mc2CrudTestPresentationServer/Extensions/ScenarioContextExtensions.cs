@@ -51,4 +51,15 @@ internal static class ScenarioContextExtensions
     {
         return scenarioContext.Get<CreateCustomerCommand>("mc2CrudTestPresentationServerCreateCustomerCommand");
     }
+
+
+    public static void AddCustomerErrorMessage(this ScenarioContext scenarioContext, string errorMessage)
+    {
+        scenarioContext.Set(errorMessage, "mc2CrudTestPresentationServerCustomerErrorMessage");
+    }
+
+    public static string GetCustomerErrorMessage(this ScenarioContext scenarioContext)
+    {
+        return scenarioContext.Get<string>("mc2CrudTestPresentationServerCustomerErrorMessage");
+    }
 }

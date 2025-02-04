@@ -4,6 +4,10 @@
         <PackageReference Include="libphonenumber-csharp" />
         <PackageReference Include="MediatR"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Customer\Services\" />
+    </ItemGroup>
     
 </Project>
 

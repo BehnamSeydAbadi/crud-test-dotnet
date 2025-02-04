@@ -22,34 +22,30 @@ public sealed class CustomerStepDefinitions
     }
 
 
+    [Given(@"an existing customer with the phone number ""(.*)""")]
+    public async Task GivenAnExistingCustomerWithThePhoneNumber(string phoneNumber)
+    {
+        await _customerDriver.SeedCustomerAsync(phoneNumber);
+    }
+
     [When(@"As a an operator, I create the customer with the following details:")]
     public async Task WhenAsAAnOperatorICreateTheCustomerWithTheFollowingDetails(Table table)
     {
         var command = table.GetCreateCustomerCommand();
         _scenarioContext.AddCreateCustomerCommand(command);
 
-        var customerId = await _customerDriver.CreateCustomerAsync(command);
-        _scenarioContext.AddCustomerId(customerId);
+        await _customerDriver.CreateCustomerAsync(command);
     }
 
     [Then(@"the customer should be created successfully")]
     public async Task ThenTheCustomerShouldBeCreatedSuccessfully()
     {
-        var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
+        await _customerDriver.AssertCustomerCreatedSuccessfullyAsync();
+    }
 
-        var dbContext = serviceScope.ServiceProvider.GetRequiredService<Mc2CrudTestDbContext>();
-
-        var customerReadModel = await dbContext.Set<CustomerReadModel>().SingleOrDefaultAsync();
-
-        customerReadModel.Should().NotBeNull();
-
-        var command = _scenarioContext.GetCreateCustomerCommand();
-
-        customerReadModel!.FirstName.Should().Be(command.FirstName);
-        customerReadModel.LastName.Should().Be(command.LastName);
-        customerReadModel.DateOfBirth.Should().Be(command.DateOfBirth);
-        customerReadModel.PhoneNumber.Should().Be(command.PhoneNumber);
-        customerReadModel.Email.Should().Be(command.Email);
-        customerReadModel.BankAccountNumber.Should().Be(command.BankAccountNumber);
+    [Then(@"an error ""(.*)"" should be thrown")]
+    public void ThenAnErrorShouldBeThrown(string errorMessage)
+    {
+        _customerDriver.AssertErrorMessage(errorMessage);
     }
 }

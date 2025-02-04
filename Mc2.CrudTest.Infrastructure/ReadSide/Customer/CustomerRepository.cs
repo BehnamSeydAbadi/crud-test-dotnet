@@ -1,5 +1,7 @@
-﻿using Mc2.CrudTest.Domain.Customer;
+﻿using Mc2.CrudTest.Domain.Common;
+using Mc2.CrudTest.Domain.Customer;
 using Mc2.CrudTest.Domain.Customer.ValueObjects;
+using Mc2.CrudTest.Infrastructure.ReadSide.Customer.SpecificationHandlers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mc2.CrudTest.Infrastructure.ReadSide.Customer;
@@ -29,9 +31,14 @@ internal class CustomerRepository : ICustomerRepository
         await SaveChangesAsync();
     }
 
-    public async Task<CustomerDomainModel[]> GetAsync()
+    public async Task<CustomerDomainModel[]> GetAsync(
+        params AbstractSpecification<CustomerDomainModel>[] specifications)
     {
-        var readModels = await _dbContext.Set<CustomerReadModel>().ToArrayAsync();
+        var queryable = _dbContext.Set<CustomerReadModel>().AsQueryable();
+
+        queryable = queryable.Apply(specifications);
+
+        var readModels = await queryable.ToArrayAsync();
 
         return readModels.Select(c => new CustomerDomainModel
         {
