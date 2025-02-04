@@ -54,4 +54,12 @@ public class CustomerTests
 
         action.Should().ThrowExactly<InvalidBankAccountNumberException>();
     }
+    
+    [Fact(DisplayName = "Create bank account number with no value should throw an exception")]
+    public void CreateBankAccountNumberWithNoValueShouldThrowAnException()
+    {
+        var action = () => BankAccountNumberValueObject.Create(value: string.Empty);
+
+        action.Should().ThrowExactly<BankAccountNumberIsRequiredException>();
+    }
 }
