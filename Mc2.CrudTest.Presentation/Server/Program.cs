@@ -1,3 +1,7 @@
+using Mc2.CrudTest.Application;
+using Mc2.CrudTest.Infrastructure;
+using Mc2.CrudTest.Presentation.Server.Endpoints;
+
 namespace Mc2.CrudTest.Presentation.Server;
 
 public class Program
@@ -6,36 +10,15 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
-        builder.Services.AddControllersWithViews();
-        builder.Services.AddRazorPages();
+        PresentationBootstrapper.Run(builder.Services);
+        ApplicationBootstrapper.Run(builder.Services);
+        InfrastructureBootstrapper.Run(builder.Services, builder.Configuration);
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseWebAssemblyDebugging();
-        }
-        else
-        {
-            app.UseExceptionHandler("/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
-        }
+        CustomerEndpoints.Map(app);
 
-        app.UseHttpsRedirection();
-
-        app.UseBlazorFrameworkFiles();
-        app.UseStaticFiles();
-
-        app.UseRouting();
-
-
-        app.MapRazorPages();
-        app.MapControllers();
-        app.MapFallbackToFile("index.html");
+        PresentationBootstrapper.SetUpMiddlewares(app);
 
         app.Run();
     }
