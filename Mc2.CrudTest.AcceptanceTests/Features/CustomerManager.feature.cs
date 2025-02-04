@@ -173,7 +173,7 @@ namespace Mc2.CrudTest.AcceptanceTests.Features
         testRunner.When("As a an operator, I create the customer with the following details:", ((string)(null)), table2, "When ");
 #line hidden
 #line 16
-        testRunner.Then("an error \"DuplicatePhoneNumberException\" should be thrown", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+        testRunner.Then("an error \"Duplicate phone number\" should be thrown", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

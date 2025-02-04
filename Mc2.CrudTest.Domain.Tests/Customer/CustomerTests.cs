@@ -36,4 +36,10 @@ public class CustomerTests
 
         action.Should().ThrowExactly<PhoneNumberIsRequiredException>();
     }
+
+    [Fact(DisplayName = "Create bank account number successfully")]
+    public void CreateBankAccountNumberSuccessfully()
+    {
+        BankAccountNumberValueObject.Create("12345678");
+    }
 }
