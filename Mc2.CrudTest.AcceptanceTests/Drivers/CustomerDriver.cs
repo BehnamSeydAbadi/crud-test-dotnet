@@ -1,3 +1,8 @@
+using System.Net.Http.Json;
+using Mc2.CrudTest.AcceptanceTests.Mc2CrudTestPresentationServer.Extensions;
+using Mc2.CrudTest.Application.Customer.Command;
+using Mc2.CrudTest.Application.Customer.Query.ViewModels;
+
 namespace Mc2.CrudTest.AcceptanceTests.Drivers;
 
 public class CustomerDriver
@@ -9,15 +14,21 @@ public class CustomerDriver
         _scenarioContext = scenarioContext;
     }
 
-    public async Task<Guid> CreateCustomerAsync()
+    public async Task<Guid> CreateCustomerAsync(CreateCustomerCommand command)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var httpClient = _scenarioContext.GetMc2CrudTestPresentationServerHttpClient();
+
+        var httpResponseMessage = await httpClient.PostAsync("/api/customers", JsonContent.Create(command));
+
+        return await httpResponseMessage.Content.ReadFromJsonAsync<Guid>();
     }
 
-    public async Task AssertCustomerCreationAsync(Guid customerId)
+    public async Task<CustomerViewModel?> GetCustomerAsync(Guid id)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var httpClient = _scenarioContext.GetMc2CrudTestPresentationServerHttpClient();
+
+        var httpResponseMessage = await httpClient.GetAsync($"/api/customers/{id}");
+
+        return await httpResponseMessage.Content.ReadFromJsonAsync<CustomerViewModel>();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Mc2.CrudTest.Application.Customer.Command;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Mc2.CrudTest.AcceptanceTests.Mc2CrudTestPresentationServer.Extensions;
 
@@ -11,6 +12,12 @@ internal static class ScenarioContextExtensions
         scenarioContext.Set(httpClient, "mc2CrudTestPresentationServerHttpClient");
     }
 
+    public static HttpClient GetMc2CrudTestPresentationServerHttpClient(this ScenarioContext scenarioContext)
+    {
+        return scenarioContext.Get<HttpClient>("mc2CrudTestPresentationServerHttpClient");
+    }
+
+
     public static void AddMc2CrudTestPresentationServerServiceScope(
         this ScenarioContext scenarioContext, IServiceScope serviceScope
     )
@@ -18,24 +25,30 @@ internal static class ScenarioContextExtensions
         scenarioContext.Set(serviceScope, "mc2CrudTestPresentationServerServiceScope");
     }
 
+    public static IServiceScope GetMc2CrudTestPresentationServerServiceScope(this ScenarioContext scenarioContext)
+    {
+        return scenarioContext.Get<IServiceScope>("mc2CrudTestPresentationServerServiceScope");
+    }
+
+
     public static void AddCustomerId(this ScenarioContext scenarioContext, Guid customerId)
     {
         scenarioContext.Set(customerId, "mc2CrudTestPresentationServerCustomerId");
     }
-
 
     public static Guid GetCustomerId(this ScenarioContext scenarioContext)
     {
         return scenarioContext.Get<Guid>("mc2CrudTestPresentationServerCustomerId");
     }
 
-    public static HttpClient GetMc2CrudTestPresentationServerHttpClient(this ScenarioContext scenarioContext)
+
+    public static void AddCreateCustomerCommand(this ScenarioContext scenarioContext, CreateCustomerCommand command)
     {
-        return scenarioContext.Get<HttpClient>("mc2CrudTestPresentationServerHttpClient");
+        scenarioContext.Set(command, "mc2CrudTestPresentationServerCreateCustomerCommand");
     }
 
-    public static IServiceScope AddMc2CrudTestPresentationServerServiceScope(this ScenarioContext scenarioContext)
+    public static CreateCustomerCommand GetCreateCustomerCommand(this ScenarioContext scenarioContext)
     {
-        return scenarioContext.Get<IServiceScope>("mc2CrudTestPresentationServerServiceScope");
+        return scenarioContext.Get<CreateCustomerCommand>("mc2CrudTestPresentationServerCreateCustomerCommand");
     }
 }

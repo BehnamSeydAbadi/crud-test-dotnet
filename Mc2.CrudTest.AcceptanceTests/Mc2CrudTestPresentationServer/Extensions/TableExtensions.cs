@@ -4,8 +4,18 @@ namespace Mc2.CrudTest.AcceptanceTests.Mc2CrudTestPresentationServer.Extensions;
 
 internal static class TableExtensions
 {
-    public static CreateCustomerCommand MapToCreateCustomerCommand(this Table table)
+    public static CreateCustomerCommand GetCreateCustomerCommand(this Table table)
     {
-        throw new NotImplementedException();
+        var tableRow = table.Rows[0];
+
+        return new CreateCustomerCommand
+        {
+            FirstName = tableRow[nameof(CreateCustomerCommand.FirstName)],
+            LastName = tableRow[nameof(CreateCustomerCommand.LastName)],
+            DateOfBirth = tableRow[nameof(CreateCustomerCommand.DateOfBirth)].ToDateTime(),
+            PhoneNumber = tableRow[nameof(CreateCustomerCommand.PhoneNumber)],
+            Email = tableRow[nameof(CreateCustomerCommand.Email)],
+            BankAccountNumber = tableRow[nameof(CreateCustomerCommand.BankAccountNumber)],
+        };
     }
 }
