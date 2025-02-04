@@ -42,4 +42,16 @@ public class CustomerTests
     {
         BankAccountNumberValueObject.Create("12345678");
     }
+
+    [Theory(DisplayName = "Create bank account number with valid values should throw an exception")]
+    [InlineData("123456789_")]
+    [InlineData("a")]
+    [InlineData("_")]
+    [InlineData("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890")]
+    public void CreateBankAccountNumberWithInvalidValuesShouldThrowException(string value)
+    {
+        var action = () => BankAccountNumberValueObject.Create(value);
+
+        action.Should().ThrowExactly<InvalidBankAccountNumberException>();
+    }
 }
