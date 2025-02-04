@@ -54,12 +54,38 @@ public class CustomerTests
 
         action.Should().ThrowExactly<InvalidBankAccountNumberException>();
     }
-    
+
     [Fact(DisplayName = "Create bank account number with no value should throw an exception")]
     public void CreateBankAccountNumberWithNoValueShouldThrowAnException()
     {
         var action = () => BankAccountNumberValueObject.Create(value: string.Empty);
 
         action.Should().ThrowExactly<BankAccountNumberIsRequiredException>();
+    }
+
+    [Fact(DisplayName = "Create email successfully")]
+    public void CreateEmailSuccessfully()
+    {
+        EmailValueObject.Create("behnam@mail.com");
+    }
+
+    [Theory(DisplayName = "Create email with invalid values should throw an exception")]
+    [InlineData("plainaddress")]
+    [InlineData("@missingusername.com")]
+    [InlineData("username@.com")]
+    [InlineData("username@domain,com")]
+    public void CreateEmailWithInvalidValuesShouldThrowException(string value)
+    {
+        var action = () => EmailValueObject.Create(value);
+
+        action.Should().ThrowExactly<InvalidEmailException>();
+    }
+    
+    [Fact(DisplayName = "Create email with no value should throw an exception")]
+    public void CreateEmailWithNoValueShouldThrowAnException()
+    {
+        var action = () => EmailValueObject.Create(value: string.Empty);
+
+        action.Should().ThrowExactly<EmailIsRequiredException>();
     }
 }
