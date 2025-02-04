@@ -6,10 +6,42 @@ services:
       context: ../../
       dockerfile: Mc2.CrudTest.Presentation/Server/Dockerfile
     ports:
-      - "80:80"
-    networks:
-      - app-network
+      - "5000:80"
+      - "5001:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__SqlServer=Server=db;Database=McCrudTestDb;User Id=sa;Password=SuperAdmin@1;TrustServerCertificate=True;
+      - ConnectionStrings__EventStore=esdb://eventstore:2113?tls=false
+    depends_on:
+      - mssql
+      - eventstore
 
-networks:
-  app-network:
-    driver: bridge
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "SuperAdmin@1"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  eventstore:
+    image: eventstore/eventstore:latest
+    container_name: eventstore
+    ports:
+      - "2113:2113"
+      - "1113:1113"
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+    volumes:
+      - eventstore_data:/var/lib/eventstore
+
+volumes:
+  sqlserver_data:
+  eventstore_data:
