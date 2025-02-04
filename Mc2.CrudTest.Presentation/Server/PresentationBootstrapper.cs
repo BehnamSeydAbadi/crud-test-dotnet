@@ -13,6 +13,8 @@ internal class PresentationBootstrapper
 
     public static void SetUpMiddlewares(WebApplication app)
     {
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+        
         app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
         app.UseSwagger();
