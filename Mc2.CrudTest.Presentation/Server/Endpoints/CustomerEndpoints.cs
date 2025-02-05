@@ -2,6 +2,9 @@
 using Mc2.CrudTest.Application.Customer.Command.CreateCustomer;
 using Mc2.CrudTest.Application.Customer.Command.DeleteCustomer;
 using Mc2.CrudTest.Application.Customer.Command.UpdateCustomer;
+using Mc2.CrudTest.Application.Customer.Query.GetAll;
+using Mc2.CrudTest.Application.Customer.Query.GetById;
+using Mc2.CrudTest.Application.Customer.Query.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +20,21 @@ public class CustomerEndpoints
             return Results.Ok(customerId);
         });
 
-        endpoints.MapPut("api/customers/{id}",
+        endpoints.MapGet("api/customers", async (IMediator mediator) =>
+        {
+            var viewModels = await mediator.Send(new GetAllCustomersQuery());
+            return Results.Ok(viewModels);
+        });
+
+        endpoints.MapGet("api/customers/{id:Guid}", async (IMediator mediator, Guid id) =>
+        {
+            var viewModel = await mediator.Send(new GetCustomerByIdQuery(id));
+
+            if (viewModel is null) return Results.NoContent();
+            else return Results.Ok(viewModel);
+        });
+
+        endpoints.MapPut("api/customers/{id:Guid}",
             async (IMediator mediator, Guid id, [FromBody] UpdateCustomerCommand command) =>
             {
                 command.Id = id;
@@ -25,7 +42,7 @@ public class CustomerEndpoints
                 return Results.Ok();
             });
 
-        endpoints.MapDelete("api/customers/{id}",
+        endpoints.MapDelete("api/customers/{id:Guid}",
             async (IMediator mediator, Guid id) =>
             {
                 await mediator.Send(new DeleteCustomerCommand(id));

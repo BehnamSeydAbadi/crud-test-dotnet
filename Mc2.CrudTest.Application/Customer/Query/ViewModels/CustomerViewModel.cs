@@ -1,6 +1,8 @@
-﻿namespace Mc2.CrudTest.Application.Customer.Query.ViewModels;
+﻿using Mc2.CrudTest.Domain.Customer;
 
-public class CustomerViewModel
+namespace Mc2.CrudTest.Application.Customer.Query.ViewModels;
+
+public class CustomerViewModel : ICustomerBaseModel
 {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
