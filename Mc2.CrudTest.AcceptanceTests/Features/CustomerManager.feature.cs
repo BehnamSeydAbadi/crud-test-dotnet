@@ -116,7 +116,7 @@ namespace Mc2.CrudTest.AcceptanceTests.Features
                             "behnam@mail.com",
                             "123456789"});
 #line 6
-        testRunner.When("As a an operator, I create the customer with the following details:", ((string)(null)), table1, "When ");
+        testRunner.When("As an operator, I create the customer with the following details:", ((string)(null)), table1, "When ");
 #line hidden
 #line 9
         testRunner.Then("the customer should be created successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -153,7 +153,7 @@ namespace Mc2.CrudTest.AcceptanceTests.Features
             {
                 this.ScenarioStart();
 #line 12
-        testRunner.Given("an existing customer with the phone number \"+989004150000\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+        testRunner.Given("there is an existing customer with the phone number \"+989004150000\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                             "FirstName",
@@ -170,10 +170,78 @@ namespace Mc2.CrudTest.AcceptanceTests.Features
                             "behnam@mail.com",
                             "123456789"});
 #line 13
-        testRunner.When("As a an operator, I create the customer with the following details:", ((string)(null)), table2, "When ");
+        testRunner.When("As an operator, I create the customer with the following details:", ((string)(null)), table2, "When ");
 #line hidden
 #line 16
         testRunner.Then("an error \"Duplicate phone number\" should be thrown", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Create customer with duplicate name and date of birth")]
+        public virtual void CreateCustomerWithDuplicateNameAndDateOfBirth()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create customer with duplicate name and date of birth", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+#line 18
+    this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                            "FirstName",
+                            "LastName",
+                            "DateOfBirth",
+                            "PhoneNumber",
+                            "Email",
+                            "BankAccountNumber"});
+                table3.AddRow(new string[] {
+                            "Behnam",
+                            "SeydAbadi",
+                            "1997-03-29",
+                            "+989009009090",
+                            "anotherx@mail.com",
+                            "98765432143434"});
+#line 19
+        testRunner.Given("there is an existing customer with the following details:", ((string)(null)), table3, "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                            "FirstName",
+                            "LastName",
+                            "DateOfBirth",
+                            "PhoneNumber",
+                            "Email",
+                            "BankAccountNumber"});
+                table4.AddRow(new string[] {
+                            "Behnam",
+                            "SeydAbadi",
+                            "1997-03-29",
+                            "+989004150001",
+                            "another@mail.com",
+                            "987654321"});
+#line 22
+        testRunner.When("As an operator, I create the customer with the following details:", ((string)(null)), table4, "When ");
+#line hidden
+#line 25
+        testRunner.Then("an error \"Duplicate customer\" should be thrown", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

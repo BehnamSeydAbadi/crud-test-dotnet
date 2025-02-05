@@ -22,13 +22,21 @@ public sealed class CustomerStepDefinitions
     }
 
 
-    [Given(@"an existing customer with the phone number ""(.*)""")]
+    [Given(@"there is an existing customer with the phone number ""(.*)""")]
     public async Task GivenAnExistingCustomerWithThePhoneNumber(string phoneNumber)
     {
         await _customerDriver.SeedCustomerAsync(phoneNumber);
     }
 
-    [When(@"As a an operator, I create the customer with the following details:")]
+    [Given(@"there is an existing customer with the following details:")]
+    public async Task GivenThereIsAnExistingCustomerWithTheFollowingDetails(Table table)
+    {
+        var command = table.GetCreateCustomerCommand();
+        await _customerDriver.SeedCustomerAsync(command);
+    }
+
+
+    [When(@"As an operator, I create the customer with the following details:")]
     public async Task WhenAsAAnOperatorICreateTheCustomerWithTheFollowingDetails(Table table)
     {
         var command = table.GetCreateCustomerCommand();

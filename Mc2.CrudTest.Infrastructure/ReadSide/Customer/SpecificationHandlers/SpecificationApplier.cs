@@ -23,4 +23,16 @@ public static class SpecificationApplier
     {
         return queryable.Where(c => c.PhoneNumber == specification.PhoneNumber);
     }
+
+    private static IQueryable<CustomerReadModel> ApplySpecification(
+        IQueryable<CustomerReadModel> queryable,
+        GetByFirstNameAndLastNameAndDateOtBirthSpecification specification
+    )
+    {
+        return queryable.Where(
+            c => c.FirstName == specification.FirstName
+                 && c.LastName == specification.LastName
+                 && c.DateOfBirth == specification.DateOfBirth
+        );
+    }
 }

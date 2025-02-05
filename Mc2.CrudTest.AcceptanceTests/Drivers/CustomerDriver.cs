@@ -72,7 +72,6 @@ public class CustomerDriver
     {
         var customerReadModel = new CustomerReadModel
         {
-            Id = Guid.NewGuid(),
             FirstName = "John",
             LastName = "Doe",
             PhoneNumber = phoneNumber,
@@ -81,10 +80,24 @@ public class CustomerDriver
             Email = "john@doe.com",
         };
 
-        var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
-        var dbContext = serviceScope.ServiceProvider.GetRequiredService<Mc2CrudTestDbContext>();
-        dbContext.Set<CustomerReadModel>().Add(customerReadModel);
-        await dbContext.SaveChangesAsync();
+        await AddCustomerReadModelAsync(customerReadModel);
+
+        return customerReadModel;
+    }
+
+    public async Task<CustomerReadModel> SeedCustomerAsync(CreateCustomerCommand command)
+    {
+        var customerReadModel = new CustomerReadModel
+        {
+            FirstName = command.FirstName,
+            LastName = command.LastName,
+            PhoneNumber = command.PhoneNumber,
+            BankAccountNumber = command.BankAccountNumber,
+            DateOfBirth = command.DateOfBirth,
+            Email = command.Email,
+        };
+
+        await AddCustomerReadModelAsync(customerReadModel);
 
         return customerReadModel;
     }
@@ -93,5 +106,14 @@ public class CustomerDriver
     {
         string customerErrorMessage = _scenarioContext.GetCustomerErrorMessage();
         customerErrorMessage.Should().Be(errorMessage);
+    }
+
+
+    private async Task AddCustomerReadModelAsync(CustomerReadModel customerReadModel)
+    {
+        var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<Mc2CrudTestDbContext>();
+        dbContext.Set<CustomerReadModel>().Add(customerReadModel);
+        await dbContext.SaveChangesAsync();
     }
 }
