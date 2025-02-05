@@ -35,4 +35,12 @@ public static class SpecificationApplier
                  && c.DateOfBirth == specification.DateOfBirth
         );
     }
+
+    private static IQueryable<CustomerReadModel> ApplySpecification(
+        IQueryable<CustomerReadModel> queryable,
+        GetByEmailSpecification specification
+    )
+    {
+        return queryable.Where(c => c.Email == specification.Email);
+    }
 }
