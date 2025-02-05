@@ -97,13 +97,29 @@ public class CustomerDriver
         return new Result(Data: null, errorMessage);
     }
 
-    public async Task AssertCustomerCreatedSuccessfullyAsync(Guid customerId)
+    public async Task<Result> DeleteCustomerAsync(Guid id)
+    {
+        var httpClient = _scenarioContext.GetMc2CrudTestPresentationServerHttpClient();
+
+        var httpResponseMessage = await httpClient.DeleteAsync($"/api/customers/{id}");
+
+        string? errorMessage = null;
+
+        if (httpResponseMessage.IsSuccessStatusCode is false)
+        {
+            errorMessage = await httpResponseMessage.Content.ReadAsStringAsync();
+        }
+
+        return new Result(Data: null, errorMessage);
+    }
+
+    public async Task AssertCustomerCreatedSuccessfullyAsync(Guid id)
     {
         var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
 
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<Mc2CrudTestDbContext>();
 
-        var customerReadModel = await dbContext.Set<CustomerReadModel>().SingleOrDefaultAsync(c => c.Id == customerId);
+        var customerReadModel = await dbContext.Set<CustomerReadModel>().SingleOrDefaultAsync(c => c.Id == id);
 
         customerReadModel.Should().NotBeNull();
 
@@ -133,6 +149,17 @@ public class CustomerDriver
         customerReadModel.PhoneNumber.Should().Be(command.PhoneNumber);
         customerReadModel.Email.Should().Be(command.Email);
         customerReadModel.BankAccountNumber.Should().Be(command.BankAccountNumber);
+    }
+
+    public async Task AssertCustomerDeletedSuccessfullyAsync(Guid id)
+    {
+        var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
+
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<Mc2CrudTestDbContext>();
+
+        var customerReadModel = await dbContext.Set<CustomerReadModel>().SingleOrDefaultAsync(c => c.Id == id);
+
+        customerReadModel.Should().BeNull();
     }
 
     public void AssertErrorMessage(string errorMessage)

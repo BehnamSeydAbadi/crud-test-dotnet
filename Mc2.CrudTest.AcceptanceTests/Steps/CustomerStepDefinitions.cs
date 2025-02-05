@@ -99,6 +99,19 @@ public sealed class CustomerStepDefinitions
         }
     }
 
+    [When(@"As an operator, I delete the customer")]
+    public async Task WhenAsAnOperatorIDeleteTheCustomer()
+    {
+        var customerId = _scenarioContext.GetCustomers().Single().Id;
+
+        var result = await _customerDriver.DeleteCustomerAsync(customerId);
+
+        if (string.IsNullOrWhiteSpace(result.ErrorMessage) is false)
+        {
+            _scenarioContext.AddCustomerErrorMessage(result.ErrorMessage);
+        }
+    }
+
 
     [Then(@"the customer should be created successfully")]
     public async Task ThenTheCustomerShouldBeCreatedSuccessfully()
@@ -119,5 +132,12 @@ public sealed class CustomerStepDefinitions
         var customerId = _scenarioContext.GetCustomers().Single().Id;
         var command = _scenarioContext.GetUpdateCustomerCommand();
         await _customerDriver.AssertCustomerUpdatedSuccessfullyAsync(customerId, command);
+    }
+
+    [Then(@"the customer should be deleted successfully")]
+    public async Task ThenTheCustomerShouldBeDeletedSuccessfully()
+    {
+        var customerId = _scenarioContext.GetCustomers().Single().Id;
+        await _customerDriver.AssertCustomerDeletedSuccessfullyAsync(customerId);
     }
 }

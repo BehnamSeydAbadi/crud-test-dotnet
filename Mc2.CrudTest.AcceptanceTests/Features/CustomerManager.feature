@@ -61,3 +61,10 @@ As a an operator I wish to be able to Create, Update, Delete customers and list 
           | FirstName | LastName   | DateOfBirth | PhoneNumber   | Email            | BankAccountNumber |
           | Behnam2   | SeydAbadi2 | 1997-03-29  | +989000000000 | another@mail.com | 987654321         |
         Then an error "Duplicate email" should be thrown
+
+    Scenario: Delete customer successfully
+        Given there is an existing customer with the following details:
+          | FirstName | LastName  | DateOfBirth | PhoneNumber   | Email             | BankAccountNumber |
+          | Behnam    | SeydAbadi | 1997-03-29  | +989009009090 | anotherx@mail.com | 98765432143434    |
+        When As an operator, I delete the customer
+        Then the customer should be deleted successfully

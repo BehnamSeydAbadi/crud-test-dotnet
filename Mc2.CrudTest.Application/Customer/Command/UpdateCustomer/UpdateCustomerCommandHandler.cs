@@ -10,25 +10,25 @@ namespace Mc2.CrudTest.Application.Customer.Command.UpdateCustomer;
 
 public class UpdateCustomerCommandHandler : AbstractCommandHandler, IRequestHandler<UpdateCustomerCommand>
 {
-    private readonly IEventStoreRepository _eventStore;
+    private readonly IEventStoreRepository _eventStoreRepository;
     private readonly IValidateDuplicateCustomerDomainService _validateDuplicateCustomerDomainService;
     private readonly IValidateDuplicateEmail _validateDuplicateEmail;
 
     public UpdateCustomerCommandHandler(
         IMediator mediator,
-        IEventStoreRepository eventStore,
+        IEventStoreRepository eventStoreRepository,
         IValidateDuplicateCustomerDomainService validateDuplicateCustomerDomainService,
         IValidateDuplicateEmail validateDuplicateEmail
     ) : base(mediator)
     {
-        _eventStore = eventStore;
+        _eventStoreRepository = eventStoreRepository;
         _validateDuplicateCustomerDomainService = validateDuplicateCustomerDomainService;
         _validateDuplicateEmail = validateDuplicateEmail;
     }
 
     public async Task Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
     {
-        var domainEvents = await _eventStore.GetEventsAsync(request.Id.ToString());
+        var domainEvents = await _eventStoreRepository.GetEventsAsync(request.Id.ToString());
 
         var domainModel = CustomerDomainModel.Reconstruct(domainEvents);
 

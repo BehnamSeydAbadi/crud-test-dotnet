@@ -79,6 +79,13 @@ public class CustomerDomainModel : AbstractDomainModel
         QueueDomainEvent(@event);
     }
 
+    public void Delete()
+    {
+        var @event = new CustomerDeletedEvent(AggregateId);
+        Apply(@event);
+        QueueDomainEvent(@event);
+    }
+
 
     private void Apply(params dynamic[] domainEvents)
     {
@@ -108,5 +115,10 @@ public class CustomerDomainModel : AbstractDomainModel
         this.Email = EmailValueObject.Create(@event.Email);
         this.BankAccountNumber = BankAccountNumberValueObject.Create(@event.BankAccountNumber);
         this.DateOfBirth = @event.DateOfBirth;
+    }
+
+    private void When(CustomerDeletedEvent @event)
+    {
+        this.AggregateId = @event.AggregateId;
     }
 }

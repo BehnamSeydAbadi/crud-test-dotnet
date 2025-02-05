@@ -31,22 +31,6 @@ internal class CustomerRepository : ICustomerRepository
         await SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(CustomerDomainModel domainModel)
-    {
-        var readModel = await _dbContext.Set<CustomerReadModel>()
-            .SingleAsync(c => c.Id == domainModel.AggregateId);
-
-        readModel.FirstName = domainModel.FirstName;
-        readModel.LastName = domainModel.LastName;
-        readModel.PhoneNumber = domainModel.PhoneNumber.Value;
-        readModel.Email = domainModel.Email.Value;
-        readModel.BankAccountNumber = domainModel.BankAccountNumber.Value;
-        readModel.DateOfBirth = domainModel.DateOfBirth;
-        _dbContext.Set<CustomerReadModel>().Update(readModel);
-
-        await SaveChangesAsync();
-    }
-
     public async Task<CustomerDomainModel[]> GetAsync(
         params AbstractSpecification<CustomerDomainModel>[] specifications)
     {
@@ -84,6 +68,31 @@ internal class CustomerRepository : ICustomerRepository
         queryable = queryable.Apply(specifications);
 
         return queryable.Any();
+    }
+
+    public async Task UpdateAsync(CustomerDomainModel domainModel)
+    {
+        var readModel = await _dbContext.Set<CustomerReadModel>()
+            .SingleAsync(c => c.Id == domainModel.AggregateId);
+
+        readModel.FirstName = domainModel.FirstName;
+        readModel.LastName = domainModel.LastName;
+        readModel.PhoneNumber = domainModel.PhoneNumber.Value;
+        readModel.Email = domainModel.Email.Value;
+        readModel.BankAccountNumber = domainModel.BankAccountNumber.Value;
+        readModel.DateOfBirth = domainModel.DateOfBirth;
+        _dbContext.Set<CustomerReadModel>().Update(readModel);
+
+        await SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var readModel = await _dbContext.Set<CustomerReadModel>().FirstAsync(c => c.Id == id);
+
+        _dbContext.Set<CustomerReadModel>().Remove(readModel);
+
+        await SaveChangesAsync();
     }
 
 
