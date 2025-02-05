@@ -51,4 +51,12 @@ public static class SpecificationApplier
     {
         return queryable.Where(c => c.Id != specification.Id);
     }
+
+    private static IQueryable<CustomerReadModel> ApplySpecification(
+        IQueryable<CustomerReadModel> queryable,
+        GetByIdSpecification specification
+    )
+    {
+        return queryable.Where(c => c.Id == specification.Id);
+    }
 }
