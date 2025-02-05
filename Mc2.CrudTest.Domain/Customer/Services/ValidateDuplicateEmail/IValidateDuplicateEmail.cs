@@ -3,4 +3,5 @@
 public interface IValidateDuplicateEmail
 {
     void Validate(string email);
+    void Validate(Guid aggregateId, string email);
 }

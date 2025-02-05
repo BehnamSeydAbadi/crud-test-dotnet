@@ -29,10 +29,6 @@ public sealed class CustomerStepDefinitions
         _scenarioContext.AddCustomers(customerReadModel);
     }
 
-    public async Task GivenThereIsAnExistingCustomerWithTheFollowingDetails(Table table)
-    {
-    }
-
     [Given(@"there are existing customers with the following details:")]
     [Given(@"there is an existing customer with the following details:")]
     public async Task GivenThereAreExistingCustomersWithTheFollowingDetails(Table table)

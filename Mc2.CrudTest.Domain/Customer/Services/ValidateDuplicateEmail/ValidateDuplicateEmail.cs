@@ -18,4 +18,14 @@ public class ValidateDuplicateEmail : IValidateDuplicateEmail
 
         if (anyCustomer) throw new DuplicateEmailException();
     }
+
+    public void Validate(Guid id, string email)
+    {
+        var anyCustomer = _customerRepository.Any(
+            new GetByEmailSpecification(email),
+            new ExcludeByIdSpecification(id)
+        );
+
+        if (anyCustomer) throw new DuplicateEmailException();
+    }
 }

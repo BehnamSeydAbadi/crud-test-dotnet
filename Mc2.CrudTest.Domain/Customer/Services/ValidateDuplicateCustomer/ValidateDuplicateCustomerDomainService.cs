@@ -21,4 +21,14 @@ internal class ValidateDuplicateCustomerDomainService : IValidateDuplicateCustom
 
         if (anyCustomer) throw new DuplicateCustomerException();
     }
+
+    public void Validate(Guid id, CustomerDto dto)
+    {
+        var anyCustomer = _customerRepository.Any(
+            new GetByFirstNameAndLastNameAndDateOtBirthSpecification(dto.FirstName, dto.LastName, dto.DateOfBirth),
+            new ExcludeByIdSpecification(id)
+        );
+
+        if (anyCustomer) throw new DuplicateCustomerException();
+    }
 }

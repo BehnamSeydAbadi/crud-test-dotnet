@@ -2,6 +2,7 @@
 using Mc2.CrudTest.Domain.Customer;
 using Mc2.CrudTest.Domain.Customer.Dtos;
 using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateCustomer;
+using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateEmail;
 using Mc2.CrudTest.Infrastructure.EventStore.Repository;
 using MediatR;
 
@@ -11,15 +12,18 @@ public class UpdateCustomerCommandHandler : AbstractCommandHandler, IRequestHand
 {
     private readonly IEventStoreRepository _eventStore;
     private readonly IValidateDuplicateCustomerDomainService _validateDuplicateCustomerDomainService;
+    private readonly IValidateDuplicateEmail _validateDuplicateEmail;
 
     public UpdateCustomerCommandHandler(
         IMediator mediator,
         IEventStoreRepository eventStore,
-        IValidateDuplicateCustomerDomainService validateDuplicateCustomerDomainService
+        IValidateDuplicateCustomerDomainService validateDuplicateCustomerDomainService,
+        IValidateDuplicateEmail validateDuplicateEmail
     ) : base(mediator)
     {
         _eventStore = eventStore;
         _validateDuplicateCustomerDomainService = validateDuplicateCustomerDomainService;
+        _validateDuplicateEmail = validateDuplicateEmail;
     }
 
     public async Task Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
@@ -38,7 +42,8 @@ public class UpdateCustomerCommandHandler : AbstractCommandHandler, IRequestHand
                 BankAccountNumber = request.BankAccountNumber,
                 DateOfBirth = request.DateOfBirth,
             },
-            _validateDuplicateCustomerDomainService);
+            _validateDuplicateCustomerDomainService,
+            _validateDuplicateEmail);
 
         var domainEventsQueue = domainModel.GetQueuedDomainEvents();
         await PublishDomainEventsAsync(domainEventsQueue, cancellationToken);

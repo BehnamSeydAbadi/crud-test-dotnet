@@ -5,4 +5,5 @@ namespace Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateCustomer;
 public interface IValidateDuplicateCustomerDomainService
 {
     void Validate(CustomerDto dto);
+    void Validate(Guid id, CustomerDto dto);
 }

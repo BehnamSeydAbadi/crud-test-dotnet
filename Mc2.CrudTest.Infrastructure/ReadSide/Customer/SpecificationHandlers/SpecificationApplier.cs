@@ -43,4 +43,12 @@ public static class SpecificationApplier
     {
         return queryable.Where(c => c.Email == specification.Email);
     }
+
+    private static IQueryable<CustomerReadModel> ApplySpecification(
+        IQueryable<CustomerReadModel> queryable,
+        ExcludeByIdSpecification specification
+    )
+    {
+        return queryable.Where(c => c.Id != specification.Id);
+    }
 }
