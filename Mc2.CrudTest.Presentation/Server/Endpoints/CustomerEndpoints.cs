@@ -1,4 +1,6 @@
 ﻿using Mc2.CrudTest.Application.Customer.Command;
+using Mc2.CrudTest.Application.Customer.Command.CreateCustomer;
+using Mc2.CrudTest.Application.Customer.Command.UpdateCustomer;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,5 +15,13 @@ public class CustomerEndpoints
             var customerId = await mediator.Send(command);
             return Results.Ok(customerId);
         });
+
+        endpoints.MapPut("api/customers/{id}",
+            async (IMediator mediator, Guid id, [FromBody] UpdateCustomerCommand command) =>
+            {
+                command.Id = id;
+                await mediator.Send(command);
+                return Results.Ok();
+            });
     }
 }

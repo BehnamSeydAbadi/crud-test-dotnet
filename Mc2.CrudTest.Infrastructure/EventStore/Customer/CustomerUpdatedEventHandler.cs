@@ -4,16 +4,16 @@ using MediatR;
 
 namespace Mc2.CrudTest.Infrastructure.EventStore.Customer;
 
-public class CustomerCreatedEventHandler : INotificationHandler<CustomerCreatedEvent>
+public class CustomerUpdatedEventHandler : INotificationHandler<CustomerUpdatedEvent>
 {
     private readonly IEventStoreRepository _eventStoreRepository;
 
-    public CustomerCreatedEventHandler(IEventStoreRepository eventStoreRepository)
+    public CustomerUpdatedEventHandler(IEventStoreRepository eventStoreRepository)
     {
         _eventStoreRepository = eventStoreRepository;
     }
 
-    public async Task Handle(CustomerCreatedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(CustomerUpdatedEvent notification, CancellationToken cancellationToken)
     {
         await _eventStoreRepository.AppendEventAsync(notification.AggregateId.ToString(), notification);
     }

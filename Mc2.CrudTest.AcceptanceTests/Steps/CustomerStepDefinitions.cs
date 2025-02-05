@@ -25,14 +25,16 @@ public sealed class CustomerStepDefinitions
     [Given(@"there is an existing customer with the phone number ""(.*)""")]
     public async Task GivenAnExistingCustomerWithThePhoneNumber(string phoneNumber)
     {
-        await _customerDriver.SeedCustomerAsync(phoneNumber);
+        var customerReadModel = await _customerDriver.SeedCustomerAsync(phoneNumber);
+        _scenarioContext.AddCustomerId(customerReadModel.Id);
     }
 
     [Given(@"there is an existing customer with the following details:")]
     public async Task GivenThereIsAnExistingCustomerWithTheFollowingDetails(Table table)
     {
         var command = table.GetCreateCustomerCommand();
-        await _customerDriver.SeedCustomerAsync(command);
+        var customerReadModel = await _customerDriver.SeedCustomerAsync(command);
+        _scenarioContext.AddCustomerId(customerReadModel.Id);
     }
 
 
@@ -42,8 +44,33 @@ public sealed class CustomerStepDefinitions
         var command = table.GetCreateCustomerCommand();
         _scenarioContext.AddCreateCustomerCommand(command);
 
-        await _customerDriver.CreateCustomerAsync(command);
+        var result = await _customerDriver.CreateCustomerAsync(command);
+
+        if (result.Data is not null)
+        {
+            var customerId = (Guid)result.Data;
+            _scenarioContext.AddCustomerId(customerId);
+        }
+        else
+        {
+            _scenarioContext.AddCustomerErrorMessage(result.ErrorMessage!);
+        }
     }
+
+    [When(@"As an operator, I update the customer with the following details:")]
+    public async Task WhenAsAnOperatorIUpdateTheCustomerWithTheFollowingDetails(Table table)
+    {
+        var command = table.GetUpdateCustomerCommand();
+        _scenarioContext.AddUpdateCustomerCommand(command);
+
+        var result = await _customerDriver.UpdateCustomerAsync(_scenarioContext.GetCustomerId(), command);
+
+        if (string.IsNullOrWhiteSpace(result.ErrorMessage) is false)
+        {
+            _scenarioContext.AddCustomerErrorMessage(result.ErrorMessage!);
+        }
+    }
+
 
     [Then(@"the customer should be created successfully")]
     public async Task ThenTheCustomerShouldBeCreatedSuccessfully()
@@ -55,5 +82,13 @@ public sealed class CustomerStepDefinitions
     public void ThenAnErrorShouldBeThrown(string errorMessage)
     {
         _customerDriver.AssertErrorMessage(errorMessage);
+    }
+
+    [Then(@"the customer should be updated successfully")]
+    public async Task ThenTheCustomerShouldBeUpdatedSuccessfully()
+    {
+        var customerId = _scenarioContext.GetCustomerId();
+        var command = _scenarioContext.GetUpdateCustomerCommand();
+        await _customerDriver.AssertCustomerUpdatedSuccessfullyAsync(customerId, command);
     }
 }

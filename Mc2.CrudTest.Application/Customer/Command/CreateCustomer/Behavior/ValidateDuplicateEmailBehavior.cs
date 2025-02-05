@@ -3,7 +3,7 @@ using Mc2.CrudTest.Domain.Customer;
 using Mc2.CrudTest.Domain.Customer.Specifications;
 using MediatR;
 
-namespace Mc2.CrudTest.Application.Customer.Command.Behavior;
+namespace Mc2.CrudTest.Application.Customer.Command.CreateCustomer.Behavior;
 
 public class ValidateDuplicateEmailBehavior : IPipelineBehavior<CreateCustomerCommand, Guid>
 {

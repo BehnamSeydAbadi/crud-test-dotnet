@@ -1,10 +1,9 @@
 ﻿using Mc2.CrudTest.Application.Common;
 using Mc2.CrudTest.Domain.Customer;
 using Mc2.CrudTest.Domain.Customer.Dtos;
-using Mc2.CrudTest.Domain.Customer.Specifications;
 using MediatR;
 
-namespace Mc2.CrudTest.Application.Customer.Command;
+namespace Mc2.CrudTest.Application.Customer.Command.CreateCustomer;
 
 public class CreateCustomerCommandHandler : AbstractCommandHandler, IRequestHandler<CreateCustomerCommand, Guid>
 {
@@ -14,7 +13,7 @@ public class CreateCustomerCommandHandler : AbstractCommandHandler, IRequestHand
 
     public async Task<Guid> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
-        var customerDomainModel = CustomerDomainModel.Create(new CreateCustomerDto
+        var customerDomainModel = CustomerDomainModel.Create(new CustomerDto
         {
             FirstName = request.FirstName,
             LastName = request.LastName,
@@ -25,7 +24,6 @@ public class CreateCustomerCommandHandler : AbstractCommandHandler, IRequestHand
         });
 
         var domainEventsQueue = customerDomainModel.GetQueuedDomainEvents();
-
         await PublishDomainEventsAsync(domainEventsQueue, cancellationToken);
 
         return customerDomainModel.AggregateId;

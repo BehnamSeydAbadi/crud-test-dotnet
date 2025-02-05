@@ -15,7 +15,8 @@ public class CustomerDomainModel : AbstractDomainModel
     public BankAccountNumberValueObject BankAccountNumber { get; set; }
     public DateTime DateOfBirth { get; set; }
 
-    public static CustomerDomainModel Create(CreateCustomerDto dto)
+
+    public static CustomerDomainModel Create(CustomerDto dto)
     {
         var customerDomainModel = new CustomerDomainModel();
 
@@ -30,6 +31,7 @@ public class CustomerDomainModel : AbstractDomainModel
         );
 
         customerDomainModel.Apply(@event);
+        customerDomainModel.QueueDomainEvent(@event);
 
         return customerDomainModel;
     }
@@ -43,16 +45,44 @@ public class CustomerDomainModel : AbstractDomainModel
         return domainModel;
     }
 
+
+    public void Update(CustomerDto dto)
+    {
+        var @event = new CustomerUpdatedEvent(
+            AggregateId,
+            dto.FirstName,
+            dto.LastName,
+            dto.PhoneNumber,
+            dto.Email,
+            dto.BankAccountNumber,
+            dto.DateOfBirth
+        );
+
+        Apply(@event);
+        QueueDomainEvent(@event);
+    }
+
+
     private void Apply(params dynamic[] domainEvents)
     {
         foreach (var domainEvent in domainEvents)
         {
             When(domainEvent);
-            QueueDomainEvent(domainEvent);
         }
     }
 
     private void When(CustomerCreatedEvent @event)
+    {
+        this.AggregateId = @event.AggregateId;
+        this.FirstName = @event.FirstName;
+        this.LastName = @event.LastName;
+        this.PhoneNumber = PhoneNumberValueObject.Create(@event.PhoneNumber);
+        this.Email = EmailValueObject.Create(@event.Email);
+        this.BankAccountNumber = BankAccountNumberValueObject.Create(@event.BankAccountNumber);
+        this.DateOfBirth = @event.DateOfBirth;
+    }
+
+    private void When(CustomerUpdatedEvent @event)
     {
         this.AggregateId = @event.AggregateId;
         this.FirstName = @event.FirstName;

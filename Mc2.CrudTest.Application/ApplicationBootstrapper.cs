@@ -1,5 +1,6 @@
 ﻿using Mc2.CrudTest.Application.Customer.Command;
-using Mc2.CrudTest.Application.Customer.Command.Behavior;
+using Mc2.CrudTest.Application.Customer.Command.CreateCustomer;
+using Mc2.CrudTest.Application.Customer.Command.CreateCustomer.Behavior;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -32,3 +32,12 @@ As a an operator I wish to be able to Create, Update, Delete customers and list 
           | FirstName | LastName  | DateOfBirth | PhoneNumber   | Email            | BankAccountNumber |
           | Behnam2   | SeydAbadi | 1997-03-29  | +989004150001 | another@mail.com | 987654321         |
         Then an error "Duplicate email" should be thrown
+
+    Scenario: Update customer successfully
+        Given there is an existing customer with the following details:
+          | FirstName | LastName   | DateOfBirth | PhoneNumber   | Email            | BankAccountNumber |
+          | Behnam1   | SeydAbadi1 | 2003-03-29  | +989999999999 | another@mail.com | 98765432143434    |
+        When As an operator, I update the customer with the following details:
+          | FirstName | LastName   | DateOfBirth | PhoneNumber   | Email                    | BankAccountNumber |
+          | Behnam2   | SeydAbadi2 | 1997-03-29  | +989000000000 | anotherXanother@mail.com | 987654321         |
+        Then the customer should be updated successfully

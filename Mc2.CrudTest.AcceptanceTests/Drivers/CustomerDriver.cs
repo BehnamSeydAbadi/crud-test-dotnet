@@ -2,7 +2,11 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Mc2.CrudTest.AcceptanceTests.Mc2CrudTestPresentationServer.Extensions;
 using Mc2.CrudTest.Application.Customer.Command;
+using Mc2.CrudTest.Application.Customer.Command.CreateCustomer;
+using Mc2.CrudTest.Application.Customer.Command.UpdateCustomer;
 using Mc2.CrudTest.Application.Customer.Query.ViewModels;
+using Mc2.CrudTest.Domain.Customer.Events;
+using Mc2.CrudTest.Infrastructure.EventStore.Repository;
 using Mc2.CrudTest.Infrastructure.ReadSide;
 using Mc2.CrudTest.Infrastructure.ReadSide.Customer;
 using Microsoft.EntityFrameworkCore;
@@ -19,22 +23,50 @@ public class CustomerDriver
         _scenarioContext = scenarioContext;
     }
 
-    public async Task CreateCustomerAsync(CreateCustomerCommand command)
+    public async Task<CustomerReadModel> SeedCustomerAsync(string phoneNumber)
+    {
+        var customerReadModel = new CustomerReadModel
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            PhoneNumber = phoneNumber,
+            BankAccountNumber = "121212",
+            DateOfBirth = new DateTime(2000, 1, 1),
+            Email = "john@doe.com",
+        };
+
+        await AddCustomerReadModelAsync(customerReadModel);
+
+        return customerReadModel;
+    }
+
+    public async Task<CustomerReadModel> SeedCustomerAsync(CreateCustomerCommand command)
+    {
+        var customerId = Guid.NewGuid();
+
+        await SeedCutomerToEventStore(command, customerId);
+        return await SeedCustomerToReadDb(command, customerId);
+    }
+
+    public async Task<Result> CreateCustomerAsync(CreateCustomerCommand command)
     {
         var httpClient = _scenarioContext.GetMc2CrudTestPresentationServerHttpClient();
 
         var httpResponseMessage = await httpClient.PostAsync("/api/customers", JsonContent.Create(command));
 
+        Guid? customerId = null;
+        string? errorMessage = null;
+
         if (httpResponseMessage.IsSuccessStatusCode)
         {
-            var customerId = await httpResponseMessage.Content.ReadFromJsonAsync<Guid>();
-            _scenarioContext.AddCustomerId(customerId);
+            customerId = await httpResponseMessage.Content.ReadFromJsonAsync<Guid>();
         }
         else
         {
-            var errorMessage = await httpResponseMessage.Content.ReadAsStringAsync();
-            _scenarioContext.AddCustomerErrorMessage(errorMessage);
+            errorMessage = await httpResponseMessage.Content.ReadAsStringAsync();
         }
+
+        return new Result(customerId, errorMessage);
     }
 
     public async Task<CustomerViewModel?> GetCustomerAsync(Guid id)
@@ -44,6 +76,22 @@ public class CustomerDriver
         var httpResponseMessage = await httpClient.GetAsync($"/api/customers/{id}");
 
         return await httpResponseMessage.Content.ReadFromJsonAsync<CustomerViewModel>();
+    }
+
+    public async Task<Result> UpdateCustomerAsync(Guid id, UpdateCustomerCommand command)
+    {
+        var httpClient = _scenarioContext.GetMc2CrudTestPresentationServerHttpClient();
+
+        var httpResponseMessage = await httpClient.PutAsync($"/api/customers/{id}", JsonContent.Create(command));
+
+        string? errorMessage = null;
+
+        if (httpResponseMessage.IsSuccessStatusCode is false)
+        {
+            errorMessage = await httpResponseMessage.Content.ReadAsStringAsync();
+        }
+
+        return new Result(Data: null, errorMessage);
     }
 
     public async Task AssertCustomerCreatedSuccessfullyAsync()
@@ -68,38 +116,22 @@ public class CustomerDriver
         customerReadModel.BankAccountNumber.Should().Be(command.BankAccountNumber);
     }
 
-    public async Task<CustomerReadModel> SeedCustomerAsync(string phoneNumber)
+    public async Task AssertCustomerUpdatedSuccessfullyAsync(Guid id, UpdateCustomerCommand command)
     {
-        var customerReadModel = new CustomerReadModel
-        {
-            FirstName = "John",
-            LastName = "Doe",
-            PhoneNumber = phoneNumber,
-            BankAccountNumber = "121212",
-            DateOfBirth = new DateTime(2000, 1, 1),
-            Email = "john@doe.com",
-        };
+        var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
 
-        await AddCustomerReadModelAsync(customerReadModel);
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<Mc2CrudTestDbContext>();
 
-        return customerReadModel;
-    }
+        var customerReadModel = await dbContext.Set<CustomerReadModel>().SingleOrDefaultAsync(c => c.Id == id);
 
-    public async Task<CustomerReadModel> SeedCustomerAsync(CreateCustomerCommand command)
-    {
-        var customerReadModel = new CustomerReadModel
-        {
-            FirstName = command.FirstName,
-            LastName = command.LastName,
-            PhoneNumber = command.PhoneNumber,
-            BankAccountNumber = command.BankAccountNumber,
-            DateOfBirth = command.DateOfBirth,
-            Email = command.Email,
-        };
+        customerReadModel.Should().NotBeNull();
 
-        await AddCustomerReadModelAsync(customerReadModel);
-
-        return customerReadModel;
+        customerReadModel!.FirstName.Should().Be(command.FirstName);
+        customerReadModel.LastName.Should().Be(command.LastName);
+        customerReadModel.DateOfBirth.Should().Be(command.DateOfBirth);
+        customerReadModel.PhoneNumber.Should().Be(command.PhoneNumber);
+        customerReadModel.Email.Should().Be(command.Email);
+        customerReadModel.BankAccountNumber.Should().Be(command.BankAccountNumber);
     }
 
     public void AssertErrorMessage(string errorMessage)
@@ -116,4 +148,44 @@ public class CustomerDriver
         dbContext.Set<CustomerReadModel>().Add(customerReadModel);
         await dbContext.SaveChangesAsync();
     }
+
+    private async Task<CustomerReadModel> SeedCustomerToReadDb(CreateCustomerCommand command, Guid id)
+    {
+        var customerReadModel = new CustomerReadModel
+        {
+            Id = id,
+            FirstName = command.FirstName,
+            LastName = command.LastName,
+            PhoneNumber = command.PhoneNumber,
+            BankAccountNumber = command.BankAccountNumber,
+            DateOfBirth = command.DateOfBirth,
+            Email = command.Email,
+        };
+
+        await AddCustomerReadModelAsync(customerReadModel);
+
+        return customerReadModel;
+    }
+
+    private async Task SeedCutomerToEventStore(CreateCustomerCommand command, Guid id)
+    {
+        var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
+        var eventStoreRepository = serviceScope.ServiceProvider.GetRequiredService<IEventStoreRepository>();
+
+        await eventStoreRepository.AppendEventAsync(
+            id.ToString(),
+            new CustomerCreatedEvent(
+                id,
+                command.FirstName,
+                command.LastName,
+                command.PhoneNumber,
+                command.Email,
+                command.BankAccountNumber,
+                command.DateOfBirth
+            )
+        );
+    }
+
+
+    public record Result(object? Data, string? ErrorMessage);
 }

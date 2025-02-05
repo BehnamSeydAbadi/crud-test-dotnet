@@ -1,7 +1,12 @@
-﻿namespace Mc2.CrudTest.Domain.Customer.Dtos;
+﻿using Mc2.CrudTest.Domain.Common;
+using Mc2.CrudTest.Domain.Customer;
+using MediatR;
 
-public class CreateCustomerDto : ICustomerBaseModel
+namespace Mc2.CrudTest.Application.Customer.Command.UpdateCustomer;
+
+public class UpdateCustomerCommand : IRequest, ICustomerBaseModel
 {
+    public Guid Id { get; set; } = Guid.Empty;
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required string PhoneNumber { get; set; }

@@ -38,11 +38,15 @@ public class Mc2CrudTestPresentationServerWebApplicationFactory : WebApplication
 
     private void ConfigureInMemoryDbContext(IServiceCollection serviceCollection)
     {
-        var descriptorDbContext = serviceCollection.SingleOrDefault(
+        var dbContextOptionsService = serviceCollection.SingleOrDefault(
             sd => sd.ServiceType == typeof(DbContextOptions<Mc2CrudTestDbContext>)
         );
-
-        if (descriptorDbContext != null) serviceCollection.Remove(descriptorDbContext);
+        if (dbContextOptionsService != null) serviceCollection.Remove(dbContextOptionsService);
+        
+        var dbContextService = serviceCollection.SingleOrDefault(
+            sd => sd.ServiceType == typeof(Mc2CrudTestDbContext)
+        );
+        if (dbContextService != null) serviceCollection.Remove(dbContextService);
 
         serviceCollection.AddDbContext<Mc2CrudTestDbContext>(
             options => options.UseInMemoryDatabase($"Mc2CrudTestDb_{Guid.NewGuid()}"),

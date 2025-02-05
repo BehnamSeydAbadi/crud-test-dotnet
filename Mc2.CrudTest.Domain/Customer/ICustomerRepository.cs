@@ -7,4 +7,5 @@ public interface ICustomerRepository
     Task AddAsync(CustomerDomainModel domainModel);
     Task<CustomerDomainModel[]> GetAsync(params AbstractSpecification<CustomerDomainModel>[] specifications);
     Task<bool> AnyAsync(params AbstractSpecification<CustomerDomainModel>[] specifications);
+    Task UpdateAsync(CustomerDomainModel domainModel);
 }
