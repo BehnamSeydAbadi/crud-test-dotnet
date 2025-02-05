@@ -54,19 +54,22 @@ public class CustomerDriver
 
         var httpResponseMessage = await httpClient.PostAsync("/api/customers", JsonContent.Create(command));
 
-        Guid? customerId = null;
+        CustomerReadModel? customerReadModel = null;
         string? errorMessage = null;
 
         if (httpResponseMessage.IsSuccessStatusCode)
         {
-            customerId = await httpResponseMessage.Content.ReadFromJsonAsync<Guid>();
+            var customerId = await httpResponseMessage.Content.ReadFromJsonAsync<Guid>();
+            var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<Mc2CrudTestDbContext>();
+            customerReadModel = await dbContext.Set<CustomerReadModel>().FindAsync(customerId);
         }
         else
         {
             errorMessage = await httpResponseMessage.Content.ReadAsStringAsync();
         }
 
-        return new Result(customerId, errorMessage);
+        return new Result(customerReadModel, errorMessage);
     }
 
     public async Task<CustomerViewModel?> GetCustomerAsync(Guid id)
@@ -94,13 +97,11 @@ public class CustomerDriver
         return new Result(Data: null, errorMessage);
     }
 
-    public async Task AssertCustomerCreatedSuccessfullyAsync()
+    public async Task AssertCustomerCreatedSuccessfullyAsync(Guid customerId)
     {
         var serviceScope = _scenarioContext.GetMc2CrudTestPresentationServerServiceScope();
 
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<Mc2CrudTestDbContext>();
-
-        var customerId = _scenarioContext.GetCustomerId();
 
         var customerReadModel = await dbContext.Set<CustomerReadModel>().SingleOrDefaultAsync(c => c.Id == customerId);
 

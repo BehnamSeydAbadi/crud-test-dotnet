@@ -382,6 +382,82 @@ namespace Mc2.CrudTest.AcceptanceTests.Features
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update a customer with duplicate name and date of birth")]
+        public virtual void UpdateACustomerWithDuplicateNameAndDateOfBirth()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update a customer with duplicate name and date of birth", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+#line 45
+    this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+                TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                            "FirstName",
+                            "LastName",
+                            "DateOfBirth",
+                            "PhoneNumber",
+                            "Email",
+                            "BankAccountNumber"});
+                table9.AddRow(new string[] {
+                            "Behnam1",
+                            "SeydAbadi1",
+                            "2003-03-29",
+                            "+989999999999",
+                            "another@mail.com",
+                            "98765432143434"});
+                table9.AddRow(new string[] {
+                            "Behnam2",
+                            "SeydAbadi2",
+                            "1997-03-29",
+                            "+989000000000",
+                            "anotherXanother@mail.com",
+                            "987654321"});
+#line 46
+        testRunner.Given("there are existing customers with the following details:", ((string)(null)), table9, "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                            "FirstName",
+                            "LastName",
+                            "DateOfBirth",
+                            "PhoneNumber",
+                            "Email",
+                            "BankAccountNumber"});
+                table10.AddRow(new string[] {
+                            "Behnam1",
+                            "SeydAbadi1",
+                            "2003-03-29",
+                            "+989000000000",
+                            "anotherXanother@mail.com",
+                            "987654321"});
+#line 50
+        testRunner.When("As an operator, I update the customer with first name \"Behnam2\", last name \"SeydA" +
+                        "badi2\" and date of birth \"1997-03-29\" the following details:", ((string)(null)), table10, "When ");
+#line hidden
+#line 53
+        testRunner.Then("an error \"Duplicate customer\" should be thrown", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

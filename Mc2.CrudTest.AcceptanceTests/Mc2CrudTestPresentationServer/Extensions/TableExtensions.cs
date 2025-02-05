@@ -6,10 +6,8 @@ namespace Mc2.CrudTest.AcceptanceTests.Mc2CrudTestPresentationServer.Extensions;
 
 internal static class TableExtensions
 {
-    public static CreateCustomerCommand GetCreateCustomerCommand(this Table table)
+    public static CreateCustomerCommand GetCreateCustomerCommand(this TableRow tableRow)
     {
-        var tableRow = table.Rows[0];
-
         return new CreateCustomerCommand
         {
             FirstName = tableRow[nameof(CreateCustomerCommand.FirstName)],

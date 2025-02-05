@@ -58,8 +58,12 @@ public class CustomerDomainModel : AbstractDomainModel
     }
 
 
-    public void Update(CustomerDto dto)
+    public void Update(
+        CustomerDto dto,
+        IValidateDuplicateCustomerDomainService validateDuplicateCustomerDomainService)
     {
+        validateDuplicateCustomerDomainService.Validate(dto);
+
         var @event = new CustomerUpdatedEvent(
             AggregateId,
             dto.FirstName,

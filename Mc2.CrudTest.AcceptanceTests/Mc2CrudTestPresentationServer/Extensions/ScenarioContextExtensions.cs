@@ -1,6 +1,7 @@
 ﻿using Mc2.CrudTest.Application.Customer.Command;
 using Mc2.CrudTest.Application.Customer.Command.CreateCustomer;
 using Mc2.CrudTest.Application.Customer.Command.UpdateCustomer;
+using Mc2.CrudTest.Infrastructure.ReadSide.Customer;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Mc2.CrudTest.AcceptanceTests.Mc2CrudTestPresentationServer.Extensions;
@@ -33,14 +34,14 @@ internal static class ScenarioContextExtensions
     }
 
 
-    public static void AddCustomerId(this ScenarioContext scenarioContext, Guid customerId)
+    public static void AddCustomers(this ScenarioContext scenarioContext, params CustomerReadModel[] customers)
     {
-        scenarioContext.Set(customerId, "mc2CrudTestPresentationServerCustomerId");
+        scenarioContext.Set(customers, "mc2CrudTestPresentationServerCustomers");
     }
 
-    public static Guid GetCustomerId(this ScenarioContext scenarioContext)
+    public static CustomerReadModel[] GetCustomers(this ScenarioContext scenarioContext)
     {
-        return scenarioContext.Get<Guid>("mc2CrudTestPresentationServerCustomerId");
+        return scenarioContext.Get<CustomerReadModel[]>("mc2CrudTestPresentationServerCustomers");
     }
 
 

@@ -41,3 +41,13 @@ As a an operator I wish to be able to Create, Update, Delete customers and list 
           | FirstName | LastName   | DateOfBirth | PhoneNumber   | Email                    | BankAccountNumber |
           | Behnam2   | SeydAbadi2 | 1997-03-29  | +989000000000 | anotherXanother@mail.com | 987654321         |
         Then the customer should be updated successfully
+
+    Scenario: Update a customer with duplicate name and date of birth
+        Given there are existing customers with the following details:
+          | FirstName | LastName   | DateOfBirth | PhoneNumber   | Email                    | BankAccountNumber |
+          | Behnam1   | SeydAbadi1 | 2003-03-29  | +989999999999 | another@mail.com         | 98765432143434    |
+          | Behnam2   | SeydAbadi2 | 1997-03-29  | +989000000000 | anotherXanother@mail.com | 987654321         |
+        When As an operator, I update the customer with first name "Behnam2", last name "SeydAbadi2" and date of birth "1997-03-29" the following details:
+          | FirstName | LastName   | DateOfBirth | PhoneNumber   | Email                    | BankAccountNumber |
+          | Behnam1   | SeydAbadi1 | 2003-03-29  | +989000000000 | anotherXanother@mail.com | 987654321         |
+        Then an error "Duplicate customer" should be thrown
