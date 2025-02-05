@@ -1,4 +1,5 @@
 using Mc2.CrudTest.Application;
+using Mc2.CrudTest.Domain;
 using Mc2.CrudTest.Infrastructure;
 using Mc2.CrudTest.Presentation.Server.Endpoints;
 
@@ -10,9 +11,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        PresentationBootstrapper.Run(builder.Services);
+        DomainBootstrapper.Run(builder.Services);
         ApplicationBootstrapper.Run(builder.Services);
         InfrastructureBootstrapper.Run(builder.Services, builder.Configuration);
+        PresentationBootstrapper.Run(builder.Services);
 
         var app = builder.Build();
 

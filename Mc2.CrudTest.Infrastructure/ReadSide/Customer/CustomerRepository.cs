@@ -77,6 +77,15 @@ internal class CustomerRepository : ICustomerRepository
         return await queryable.AnyAsync();
     }
 
+    public bool Any(params AbstractSpecification<CustomerDomainModel>[] specifications)
+    {
+        var queryable = _dbContext.Set<CustomerReadModel>().AsQueryable();
+
+        queryable = queryable.Apply(specifications);
+
+        return queryable.Any();
+    }
+
 
     protected virtual async Task SaveChangesAsync()
     {

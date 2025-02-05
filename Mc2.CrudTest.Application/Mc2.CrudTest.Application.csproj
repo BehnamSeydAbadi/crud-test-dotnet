@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+        <Folder Include="Customer\Command\Exceptions\" />
         <Folder Include="Customer\Query\"/>
     </ItemGroup>
 

@@ -1,6 +1,10 @@
 ﻿using Mc2.CrudTest.Domain.Common;
 using Mc2.CrudTest.Domain.Customer.Dtos;
 using Mc2.CrudTest.Domain.Customer.Events;
+using Mc2.CrudTest.Domain.Customer.Services;
+using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateCustomer;
+using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateEmail;
+using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicatePhoneNumber;
 using Mc2.CrudTest.Domain.Customer.ValueObjects;
 
 namespace Mc2.CrudTest.Domain.Customer;
@@ -16,8 +20,16 @@ public class CustomerDomainModel : AbstractDomainModel
     public DateTime DateOfBirth { get; set; }
 
 
-    public static CustomerDomainModel Create(CustomerDto dto)
+    public static CustomerDomainModel Create(
+        CustomerDto dto,
+        IValidateDuplicateCustomerDomainService validateDuplicateCustomerDomainService,
+        IValidateDuplicateEmail validateDuplicateEmailDomainService,
+        IValidateDuplicatePhoneNumberDomainService validateDuplicatePhoneNumberDomainService)
     {
+        validateDuplicateCustomerDomainService.Validate(dto);
+        validateDuplicateEmailDomainService.Validate(dto.Email);
+        validateDuplicatePhoneNumberDomainService.Validate(dto.PhoneNumber);
+
         var customerDomainModel = new CustomerDomainModel();
 
         var @event = new CustomerCreatedEvent(
