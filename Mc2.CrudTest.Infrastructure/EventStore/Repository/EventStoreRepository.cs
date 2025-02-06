@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using EventStore.Client;
 using Mc2.CrudTest.Domain.Common;
 
@@ -13,34 +14,42 @@ internal class EventStoreRepository : IEventStoreRepository
         _eventStoreClient = eventStoreClient;
     }
 
-    public async Task AppendEventAsync(string streamId, AbstractDomainEvent @event)
+    public async Task AppendEventAsync(string streamId, dynamic @event)
     {
         var eventData = new EventData(
             Uuid.NewUuid(),
-            @event.GetType().Name,
+            @event.GetType().AssemblyQualifiedName!,
             JsonSerializer.SerializeToUtf8Bytes(@event)
         );
 
         await _eventStoreClient.AppendToStreamAsync(streamId, expectedState: StreamState.Any, new[] { eventData });
     }
 
-    public async Task<AbstractDomainEvent[]> GetEventsAsync(string streamId)
+    public async Task<dynamic[]> GetEventsAsync(string streamId)
     {
         var result = _eventStoreClient.ReadStreamAsync(Direction.Forwards, streamId, StreamPosition.Start);
 
-        if (await result.ReadState == ReadState.StreamNotFound)
-        {
-            return Array.Empty<AbstractDomainEvent>();
-        }
-
         var events = await result.ToListAsync();
 
-        return events.Select(
-            resolvedEvent =>
+        var domainEvents = new List<dynamic>();
+
+        foreach (var resolvedEvent in events)
+        {
+            var eventType = Type.GetType(resolvedEvent.Event.EventType);
+
+            if (eventType != null && typeof(AbstractDomainEvent).IsAssignableFrom(eventType))
             {
-                var eventByteArray = resolvedEvent.Event.Data.ToArray();
-                return JsonSerializer.Deserialize<AbstractDomainEvent>(eventByteArray)!;
+                var eventData = Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray());
+
+                var domainEvent = JsonSerializer.Deserialize(eventData, eventType);
+
+                if (domainEvent != null)
+                {
+                    domainEvents.Add(domainEvent);
+                }
             }
-        ).ToArray();
+        }
+
+        return domainEvents.ToArray();
     }
 }

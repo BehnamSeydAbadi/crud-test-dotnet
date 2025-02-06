@@ -22,6 +22,7 @@ public class GetCustomerByIdQueryHandler : IRequestHandler<GetCustomerByIdQuery,
             ? null
             : new CustomerViewModel
             {
+                Id = customer.AggregateId,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 DateOfBirth = customer.DateOfBirth,

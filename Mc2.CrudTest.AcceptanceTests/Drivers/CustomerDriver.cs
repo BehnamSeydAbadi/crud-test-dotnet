@@ -202,15 +202,16 @@ public class CustomerDriver
 
         await eventStoreRepository.AppendEventAsync(
             id.ToString(),
-            new CustomerCreatedEvent(
-                id,
-                command.FirstName,
-                command.LastName,
-                command.PhoneNumber,
-                command.Email,
-                command.BankAccountNumber,
-                command.DateOfBirth
-            )
+            new CustomerCreatedEvent
+            {
+                AggregateId = id,
+                FirstName = command.FirstName,
+                LastName = command.LastName,
+                PhoneNumber = command.PhoneNumber,
+                Email = command.Email,
+                BankAccountNumber = command.BankAccountNumber,
+                DateOfBirth = command.DateOfBirth
+            }
         );
     }
 

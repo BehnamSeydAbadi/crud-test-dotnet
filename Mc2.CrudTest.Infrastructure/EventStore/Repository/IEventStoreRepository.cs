@@ -4,6 +4,6 @@ namespace Mc2.CrudTest.Infrastructure.EventStore.Repository;
 
 public interface IEventStoreRepository
 {
-    Task AppendEventAsync(string streamId, AbstractDomainEvent @event);
-    Task<AbstractDomainEvent[]> GetEventsAsync(string streamId);
+    Task AppendEventAsync(string streamId, dynamic @event);
+    Task<dynamic[]> GetEventsAsync(string streamId);
 }

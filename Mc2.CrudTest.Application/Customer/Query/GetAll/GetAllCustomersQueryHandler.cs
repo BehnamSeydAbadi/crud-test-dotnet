@@ -16,9 +16,10 @@ public class GetAllCustomersQueryHandler : IRequestHandler<GetAllCustomersQuery,
     public async Task<CustomerViewModel[]> Handle(GetAllCustomersQuery request, CancellationToken cancellationToken)
     {
         var customers = await _customerRepository.GetAsync();
-        
+
         return customers.Select(c => new CustomerViewModel
         {
+            Id = c.AggregateId,
             FirstName = c.FirstName,
             LastName = c.LastName,
             DateOfBirth = c.DateOfBirth,

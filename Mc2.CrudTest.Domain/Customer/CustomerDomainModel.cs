@@ -1,7 +1,6 @@
 ﻿using Mc2.CrudTest.Domain.Common;
 using Mc2.CrudTest.Domain.Customer.Dtos;
 using Mc2.CrudTest.Domain.Customer.Events;
-using Mc2.CrudTest.Domain.Customer.Services;
 using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateCustomer;
 using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateEmail;
 using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicatePhoneNumber;
@@ -32,15 +31,16 @@ public class CustomerDomainModel : AbstractDomainModel
 
         var customerDomainModel = new CustomerDomainModel();
 
-        var @event = new CustomerCreatedEvent(
-            AggregateId: Guid.NewGuid(),
-            dto.FirstName,
-            dto.LastName,
-            dto.PhoneNumber,
-            dto.Email,
-            dto.BankAccountNumber,
-            dto.DateOfBirth
-        );
+        var @event = new CustomerCreatedEvent
+        {
+            AggregateId = Guid.NewGuid(),
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            PhoneNumber = dto.PhoneNumber,
+            Email = dto.Email,
+            BankAccountNumber = dto.BankAccountNumber,
+            DateOfBirth = dto.DateOfBirth
+        };
 
         customerDomainModel.Apply(@event);
         customerDomainModel.QueueDomainEvent(@event);
@@ -48,7 +48,7 @@ public class CustomerDomainModel : AbstractDomainModel
         return customerDomainModel;
     }
 
-    public static CustomerDomainModel Reconstruct(params AbstractDomainEvent[] @events)
+    public static CustomerDomainModel Reconstruct(params dynamic[] @events)
     {
         var domainModel = new CustomerDomainModel();
 
@@ -65,15 +65,16 @@ public class CustomerDomainModel : AbstractDomainModel
         validateDuplicateCustomerDomainService.Validate(AggregateId, dto);
         validateDuplicateEmail.Validate(AggregateId, dto.Email);
 
-        var @event = new CustomerUpdatedEvent(
-            AggregateId,
-            dto.FirstName,
-            dto.LastName,
-            dto.PhoneNumber,
-            dto.Email,
-            dto.BankAccountNumber,
-            dto.DateOfBirth
-        );
+        var @event = new CustomerUpdatedEvent
+        {
+            AggregateId = this.AggregateId,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            PhoneNumber = dto.PhoneNumber,
+            Email = dto.Email,
+            BankAccountNumber = dto.BankAccountNumber,
+            DateOfBirth = dto.DateOfBirth
+        };
 
         Apply(@event);
         QueueDomainEvent(@event);
@@ -81,7 +82,7 @@ public class CustomerDomainModel : AbstractDomainModel
 
     public void Delete()
     {
-        var @event = new CustomerDeletedEvent(AggregateId);
+        var @event = new CustomerDeletedEvent { AggregateId = this.AggregateId };
         Apply(@event);
         QueueDomainEvent(@event);
     }

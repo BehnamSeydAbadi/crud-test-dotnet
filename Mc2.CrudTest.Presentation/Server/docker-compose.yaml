@@ -13,10 +13,10 @@ services:
       - ConnectionStrings__SqlServer=Server=db;Database=McCrudTestDb;User Id=sa;Password=SuperAdmin@1;TrustServerCertificate=True;
       - ConnectionStrings__EventStore=esdb://eventstore:2113?tls=false
     depends_on:
-      - mssql
-      - eventstore
+      - db
+      - esdb
 
-  mssql:
+  db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
     ports:
@@ -27,7 +27,7 @@ services:
     volumes:
       - sqlserver_data:/var/opt/mssql
 
-  eventstore:
+  esdb:
     image: eventstore/eventstore:latest
     container_name: eventstore
     ports:

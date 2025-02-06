@@ -1,11 +1,8 @@
 ﻿namespace Mc2.CrudTest.Domain.Common;
 
-public abstract record AbstractDomainEvent
+public abstract class AbstractDomainEvent
 {
-    public Guid AggregateId { get; }
+    public Guid AggregateId { get; set; }
 
-    protected AbstractDomainEvent(Guid aggregateId)
-    {
-        AggregateId = aggregateId;
-    }
+    public abstract override string ToString();
 }

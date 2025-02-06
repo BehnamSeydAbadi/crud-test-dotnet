@@ -1,10 +1,8 @@
-﻿using Mc2.CrudTest.Application.Customer.Command;
-using Mc2.CrudTest.Application.Customer.Command.CreateCustomer;
+﻿using Mc2.CrudTest.Application.Customer.Command.CreateCustomer;
 using Mc2.CrudTest.Application.Customer.Command.DeleteCustomer;
 using Mc2.CrudTest.Application.Customer.Command.UpdateCustomer;
 using Mc2.CrudTest.Application.Customer.Query.GetAll;
 using Mc2.CrudTest.Application.Customer.Query.GetById;
-using Mc2.CrudTest.Application.Customer.Query.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
