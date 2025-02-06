@@ -3,4 +3,5 @@
 public interface IValidateDuplicatePhoneNumberDomainService
 {
     void Validate(string phoneNumber);
+    void Validate(Guid aggregateId, string phoneNumber);
 }

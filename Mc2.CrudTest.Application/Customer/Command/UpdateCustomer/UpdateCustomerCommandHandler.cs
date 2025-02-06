@@ -3,6 +3,7 @@ using Mc2.CrudTest.Domain.Customer;
 using Mc2.CrudTest.Domain.Customer.Dtos;
 using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateCustomer;
 using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicateEmail;
+using Mc2.CrudTest.Domain.Customer.Services.ValidateDuplicatePhoneNumber;
 using Mc2.CrudTest.Infrastructure.EventStore.Repository;
 using MediatR;
 
@@ -13,17 +14,20 @@ public class UpdateCustomerCommandHandler : AbstractCommandHandler, IRequestHand
     private readonly IEventStoreRepository _eventStoreRepository;
     private readonly IValidateDuplicateCustomerDomainService _validateDuplicateCustomerDomainService;
     private readonly IValidateDuplicateEmail _validateDuplicateEmail;
+    private readonly IValidateDuplicatePhoneNumberDomainService _validateDuplicatePhoneNumberDomainService;
 
     public UpdateCustomerCommandHandler(
         IMediator mediator,
         IEventStoreRepository eventStoreRepository,
         IValidateDuplicateCustomerDomainService validateDuplicateCustomerDomainService,
-        IValidateDuplicateEmail validateDuplicateEmail
+        IValidateDuplicateEmail validateDuplicateEmail,
+        IValidateDuplicatePhoneNumberDomainService validateDuplicatePhoneNumberDomainService
     ) : base(mediator)
     {
         _eventStoreRepository = eventStoreRepository;
         _validateDuplicateCustomerDomainService = validateDuplicateCustomerDomainService;
         _validateDuplicateEmail = validateDuplicateEmail;
+        _validateDuplicatePhoneNumberDomainService = validateDuplicatePhoneNumberDomainService;
     }
 
     public async Task Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
@@ -43,7 +47,9 @@ public class UpdateCustomerCommandHandler : AbstractCommandHandler, IRequestHand
                 DateOfBirth = request.DateOfBirth,
             },
             _validateDuplicateCustomerDomainService,
-            _validateDuplicateEmail);
+            _validateDuplicateEmail,
+            _validateDuplicatePhoneNumberDomainService
+        );
 
         var domainEventsQueue = domainModel.GetQueuedDomainEvents();
         await PublishDomainEventsAsync(domainEventsQueue, cancellationToken);

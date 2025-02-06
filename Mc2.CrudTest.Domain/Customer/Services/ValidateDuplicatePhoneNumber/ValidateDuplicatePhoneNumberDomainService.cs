@@ -20,4 +20,14 @@ public class ValidateDuplicatePhoneNumberDomainService : IValidateDuplicatePhone
 
         if (anyCustomerWithSamePhoneNumber) throw new DuplicatePhoneNumberException();
     }
+
+    public void Validate(Guid aggregateId, string phoneNumber)
+    {
+        var anyCustomerWithSamePhoneNumber = _customerRepository.Any(
+            new GetByPhoneNumberSpecification(phoneNumber),
+            new ExcludeByIdSpecification(aggregateId)
+        );
+
+        if (anyCustomerWithSamePhoneNumber) throw new DuplicatePhoneNumberException();
+    }
 }
