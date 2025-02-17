@@ -80,12 +80,20 @@ public class CustomerTests
 
         action.Should().ThrowExactly<InvalidEmailException>();
     }
-    
+
     [Fact(DisplayName = "Create email with no value should throw an exception")]
     public void CreateEmailWithNoValueShouldThrowAnException()
     {
         var action = () => EmailValueObject.Create(value: string.Empty);
 
         action.Should().ThrowExactly<EmailIsRequiredException>();
+    }
+
+    [Theory(DisplayName = "There is some phone numbers, When creating a fixed line phone number, throw an exception")]
+    [InlineData("+982188776655")]
+    public void Something(string value)
+    {
+        var action = () => PhoneNumberValueObject.Create(value);
+        action.Should().ThrowExactly<InvalidPhoneNumberException>();
     }
 }

@@ -13,7 +13,8 @@ public record PhoneNumberValueObject()
         var phoneNumberUtil = PhoneNumberUtil.GetInstance();
         var phoneNumber = phoneNumberUtil.Parse(value, defaultRegion: "US");
 
-        if (phoneNumberUtil.IsValidNumber(phoneNumber) is false)
+        if (phoneNumberUtil.IsValidNumber(phoneNumber) is false
+            || phoneNumberUtil.GetNumberType(phoneNumber) != PhoneNumberType.MOBILE)
             throw new InvalidPhoneNumberException();
 
 
